@@ -53,7 +53,7 @@ func handlerCotacao(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbctx, cancel := context.WithTimeout(context.Background(), 1000*time.Millisecond)
+	dbctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
 	defer cancel()
 	result := db.WithContext(dbctx).Create(&Cotacao{Valor: c.USDBRL.Bid})
 	if result.Error != nil {
