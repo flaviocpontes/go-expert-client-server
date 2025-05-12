@@ -52,7 +52,10 @@ func handlerCotacao(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-	result := db.Create(&Cotacao{Valor: c.USDBRL.Bid})
+
+	dbctx, cancel := context.WithTimeout(context.Background(), 1000*time.Millisecond)
+	defer cancel()
+	result := db.WithContext(dbctx).Create(&Cotacao{Valor: c.USDBRL.Bid})
 	if result.Error != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -64,7 +67,7 @@ func handlerCotacao(w http.ResponseWriter, r *http.Request) {
 }
 
 func buscaCotacao() (*APIResponse, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://economia.awesomeapi.com.br/json/last/USD-BRL", nil)
